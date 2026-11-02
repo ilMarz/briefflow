@@ -397,6 +397,18 @@ pre {
   font-size: 12px;
   font-weight: 500;
 }
+.graph-heading > .replay-controls {
+  margin-left: auto;
+  pointer-events: auto;
+}
+.replay-controls button {
+  min-height: 28px;
+  padding: 4px 10px;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
 .graph-heading > span {
   font-size: 11px;
   color: var(--muted);
@@ -2008,4 +2020,15 @@ pre {
 }
 .sim-notice a {
   color: var(--accent);
+}
+
+.req-actions .card-button {
+  background: var(--primary);
+  border-color: var(--accent);
+  color: #fff;
+}
+@media (hover: hover) and (pointer: fine) {
+  .req-actions .card-button:hover:not(:disabled) {
+    background: #2790ab;
+  }
 }

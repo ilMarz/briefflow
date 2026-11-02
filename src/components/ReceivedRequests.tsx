@@ -1,6 +1,6 @@
 "use client";
 
-import { Inbox, LoaderCircle, Mail, Plus, Send } from "lucide-react";
+import { FileText, Inbox, LoaderCircle, Mail, Plus, Send } from "lucide-react";
 import type { RunSummary } from "../shared/contracts";
 import { describeRun } from "../client/requests";
 
@@ -10,10 +10,12 @@ export default function ReceivedRequests({
   busy,
   mailAvailable,
   sendingId,
+  cardReady,
   onOpen,
   onNew,
   onSummary,
   onContact,
+  onCard,
 }: {
   runs: RunSummary[];
   activeId?: string;
@@ -21,10 +23,13 @@ export default function ReceivedRequests({
   /** True when the server can send email; otherwise the buttons open the mail program. */
   mailAvailable: boolean;
   sendingId?: string;
+  /** True when the active run has a final card to show. */
+  cardReady?: boolean;
   onOpen: (id: string) => void;
   onNew: () => void;
   onSummary: (run: RunSummary) => void;
   onContact: (run: RunSummary) => void;
+  onCard: () => void;
 }) {
   return (
     <aside className="request-panel panel">
@@ -85,6 +90,12 @@ export default function ReceivedRequests({
                   </dl>
                 </button>
                 <div className="req-actions">
+                  {run.id === activeId && cardReady && (
+                    <button className="card-button" onClick={onCard}>
+                      <FileText size={14} />
+                      Scheda finale
+                    </button>
+                  )}
                   <button
                     disabled={!run.email}
                     title={

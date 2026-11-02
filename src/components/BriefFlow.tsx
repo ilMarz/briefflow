@@ -8,6 +8,9 @@ import {
   ArrowRight,
   Maximize2,
   Minimize2,
+  Pause,
+  Play,
+  SkipForward,
   PanelLeftClose,
   SlidersHorizontal,
   GitBranch,
@@ -17,7 +20,6 @@ import {
   Plus,
   RefreshCw,
   Send,
-  FileText,
   X,
 } from "lucide-react";
 
@@ -119,9 +121,51 @@ export default function BriefFlow() {
     [answers, setAnswers] = useState<Partial<Record<FieldId, string>>>({});
 
   const [runId, setRunId] = useState<string>();
+  // Replay of the saved events: null shows the whole run, a number shows the first N events.
+  const [cursor, setCursor] = useState<number | null>(null);
+  const [playing, setPlaying] = useState(false);
   const graphPanel = useRef<HTMLElement>(null);
 
   const view = useMemo(() => projectEvents(events), [events]);
+  const shown = useMemo(
+    () => (cursor === null ? events : events.slice(0, cursor)),
+    [events, cursor],
+  );
+  const shownView = useMemo(() => projectEvents(shown), [shown]);
+  const replaying = cursor !== null;
+
+  useEffect(() => {
+    if (!playing) return;
+    const timer = setInterval(() => {
+      setCursor((c) => (c === null ? 1 : c + 1));
+    }, 700);
+    return () => clearInterval(timer);
+  }, [playing]);
+
+  useEffect(() => {
+    if (cursor !== null && cursor >= events.length) {
+      setPlaying(false);
+      setCursor(null);
+    }
+  }, [cursor, events.length]);
+
+  function stopReplay() {
+    setPlaying(false);
+    setCursor(null);
+  }
+
+  function togglePlay() {
+    if (playing) setPlaying(false);
+    else {
+      if (cursor === null) setCursor(0);
+      setPlaying(true);
+    }
+  }
+
+  function stepReplay() {
+    setPlaying(false);
+    setCursor((c) => (c === null ? 1 : c + 1));
+  }
   const last = events[events.length - 1];
   const lastEvent = last
     ? last.node
@@ -130,7 +174,10 @@ export default function BriefFlow() {
     : "";
   const questions = (view.interrupt?.payload.questions || []) as FieldId[];
   const actionOpen =
-    !!view.interrupt && dismissedAction !== view.interrupt.id && !busy;
+    !!view.interrupt &&
+    dismissedAction !== view.interrupt.id &&
+    !busy &&
+    !replaying;
   const recovered =
     snapshot?.status === "running" && view.status === "running" && !busy;
 
@@ -185,6 +232,7 @@ export default function BriefFlow() {
 
   async function openRun(id: string) {
     setError("");
+    stopReplay();
     setRunId(id);
     setOpenNode(undefined);
     setCardOpen(false);
@@ -228,6 +276,7 @@ export default function BriefFlow() {
     if (busy) return;
     setBusy(true);
     setError("");
+    stopReplay();
     if (!resume) {
       setEvents([]);
       setSnapshot(undefined);
@@ -633,12 +682,6 @@ export default function BriefFlow() {
                 Rispondi
               </button>
             )}
-            {view.card && (
-              <button onClick={() => setCardOpen(true)}>
-                <FileText size={14} />
-                Scheda finale
-              </button>
-            )}
             <button
               className="icon-only"
               aria-label={left ? "Nascondi richieste" : "Mostra richieste"}
@@ -783,6 +826,8 @@ export default function BriefFlow() {
               busy={busy}
               mailAvailable={mailAvailable}
               sendingId={sendingId}
+              cardReady={!!view.card}
+              onCard={() => setCardOpen(true)}
               onOpen={openRun}
               onNew={openNew}
               onSummary={sendSummary}
@@ -799,11 +844,39 @@ export default function BriefFlow() {
                 <GitBranch size={16} />
                 <h2>Percorso di qualificazione</h2>
               </div>
-              <span>{events.length} eventi</span>
+              <div className="replay-controls">
+                <button
+                  disabled={busy || events.length === 0}
+                  onClick={togglePlay}
+                  aria-label={playing ? "Pausa" : "Riproduci il percorso"}
+                >
+                  {playing ? <Pause size={14} /> : <Play size={14} />}
+                  {playing ? "Pausa" : "Play"}
+                </button>
+                <button
+                  disabled={busy || events.length === 0}
+                  onClick={stepReplay}
+                  aria-label="Evento successivo"
+                >
+                  <SkipForward size={14} />
+                  Step
+                </button>
+                {replaying && (
+                  <button onClick={stopReplay} aria-label="Esci dal replay">
+                    <X size={14} />
+                    Fine
+                  </button>
+                )}
+              </div>
+              <span>
+                {replaying
+                  ? `${shown.length} / ${events.length} eventi`
+                  : `${events.length} eventi`}
+              </span>
             </div>
             <div className="graph-canvas">
               <RunGraph
-                events={events}
+                events={shown}
                 selected={openNode?.id}
                 onSelect={showNode}
                 onDismiss={() => setOpenNode(undefined)}
@@ -828,7 +901,7 @@ export default function BriefFlow() {
               <NodeDetail
                 key={openNode.id}
                 node={openNode.id}
-                detail={view.nodes[openNode.id]}
+                detail={shownView.nodes[openNode.id]}
                 anchor={openNode.anchor}
                 bounds={openNode.bounds}
                 onClose={() => setOpenNode(undefined)}
