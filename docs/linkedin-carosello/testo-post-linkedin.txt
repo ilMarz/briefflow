@@ -1,0 +1,15 @@
+Ho usato LangGraph per un processo vero, non per una demo da tutorial.
+
+Il caso: una società di consulenza IT riceve richieste di progetto di ogni tipo. Qualcuna è fuori ambito, a qualcuna manca il budget, qualcuna ha bisogno del parere di una persona. Non è un percorso dritto.
+
+BriefFlow ha due pagine. Sul sito pubblico il cliente descrive il progetto in poche righe e lascia l’email; se serve, risponde a qualche domanda a scelta rapida e riceve un esito chiaro. Nel backoffice l’azienda vede ogni richiesta, il percorso che ha fatto e una scheda finale: tipo di progetto, se è in linea con i servizi, cosa manca, prossimo passo. In un caso reale sarebbero due accessi separati; per la demo stanno nella stessa app.
+
+Con LangGraph ho descritto il processo come una mappa: nove tappe, i nodi, e le strade che le collegano. Ogni nodo fa una cosa sola, quindi posso guardarlo lavorare e cambiarlo senza toccare il resto.
+
+Nei tre punti in cui serve giudizio uso Jev: classifica la richiesta, dice se è in linea con i servizi, controlla cosa manca. Non scrive testi: sceglie tra opzioni che decido io, con un grado di fiducia. Se la fiducia è bassa, la richiesta passa a una persona.
+
+La parte che mi piace di più: la mappa che ho scritto è la stessa che si vede a schermo. Si accende solo la strada che la richiesta ha fatto davvero.
+
+Nei tuoi processi con l’AI, cosa affideresti a un modello e cosa a una persona?
+
+#LangGraph #AIAgents #Automazione #SviluppoSoftware

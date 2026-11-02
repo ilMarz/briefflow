@@ -1,0 +1,141 @@
+{
+  "title": "LangGraph su un caso reale",
+  "header": "LangGraph / BriefFlow",
+  "footer_left": "BriefFlow",
+  "footer_right": "Costruito con LangGraph",
+  "pdf": "briefflow-carosello.pdf",
+  "caption": "Ho usato LangGraph per un processo vero, non per una demo da tutorial.\n\nIl caso: una società di consulenza IT riceve richieste di progetto di ogni tipo. Qualcuna è fuori ambito, a qualcuna manca il budget, qualcuna ha bisogno del parere di una persona. Non è un percorso dritto.\n\nBriefFlow ha due pagine. Sul sito pubblico il cliente descrive il progetto in poche righe e lascia l’email; se serve, risponde a qualche domanda a scelta rapida e riceve un esito chiaro. Nel backoffice l’azienda vede ogni richiesta, il percorso che ha fatto e una scheda finale: tipo di progetto, se è in linea con i servizi, cosa manca, prossimo passo. In un caso reale sarebbero due accessi separati; per la demo stanno nella stessa app.\n\nCon LangGraph ho descritto il processo come una mappa: nove tappe, i nodi, e le strade che le collegano. Ogni nodo fa una cosa sola, quindi posso guardarlo lavorare e cambiarlo senza toccare il resto.\n\nNei tre punti in cui serve giudizio uso Jev: classifica la richiesta, dice se è in linea con i servizi, controlla cosa manca. Non scrive testi: sceglie tra opzioni che decido io, con un grado di fiducia. Se la fiducia è bassa, la richiesta passa a una persona.\n\nLa parte che mi piace di più: la mappa che ho scritto è la stessa che si vede a schermo. Si accende solo la strada che la richiesta ha fatto davvero.\n\nNei tuoi processi con l’AI, cosa affideresti a un modello e cosa a una persona?\n\n#LangGraph #AIAgents #Automazione #SviluppoSoftware",
+  "slides": [
+    {
+      "theme": "dark",
+      "label": "Un progetto: BriefFlow",
+      "title": "Ho usato LangGraph<br/>su un caso vero",
+      "title_size": 42,
+      "blocks": [
+        {"type": "lead", "text": "BriefFlow smista le richieste di progetto di una società IT. Ogni passaggio si vede.", "size": 21, "y": 240},
+        {"type": "kicker", "text": "Il grafo mentre lavora", "y": 336},
+        {"type": "image", "path": "C:/Users/marzu/AppData/Local/Temp/claude/C--Users-marzu-Desktop-Projects-BriefFlow/6df56a2c-d49d-457b-9e07-495db8210ffd/scratchpad/carosello/cover-grafo.png", "y": 360, "h": 266}
+      ]
+    },
+    {
+      "theme": "light",
+      "label": "01 / Come funziona",
+      "title": "Due pagine,<br/>due ruoli",
+      "title_size": 50,
+      "blocks": [
+        {"type": "items", "y": 262, "step": 118, "items": [
+          {"name": "Sito pubblico / il cliente", "text": "Descrive il progetto, lascia l’email, risponde a poche domande se servono. Riceve un esito chiaro."},
+          {"name": "Backoffice / l’azienda", "text": "Vede le richieste ricevute, il percorso di ognuna e la scheda finale. Può contattare il cliente."},
+          {"name": "Nella demo", "text": "Sono due accessi diversi. Qui stanno nella stessa app, per provarle entrambe."}
+        ]}
+      ]
+    },
+    {
+      "theme": "dark",
+      "label": "02 / Cosa entra",
+      "title": "Poche righe,<br/>come in una mail",
+      "title_size": 46,
+      "blocks": [
+        {"type": "lead", "text": "Il cliente scrive cosa gli serve, con parole sue. Se mancano budget o scadenza, arrivano domande a scelta rapida.", "size": 20, "y": 232},
+        {"type": "image", "path": "C:/Users/marzu/AppData/Local/Temp/claude/C--Users-marzu-Desktop-Projects-BriefFlow/6df56a2c-d49d-457b-9e07-495db8210ffd/scratchpad/carosello/form.png", "y": 330, "h": 300}
+      ]
+    },
+    {
+      "theme": "light",
+      "label": "03 / Cosa esce",
+      "title": "Una scheda,<br/>non un riassunto",
+      "title_size": 46,
+      "blocks": [
+        {"type": "body", "text": "Tipo di progetto, se è in linea, cosa manca, prossimo passo. Tre esiti: pronta, da chiarire, fuori ambito.", "size": 20, "y": 232},
+        {"type": "image", "path": "C:/Users/marzu/AppData/Local/Temp/claude/C--Users-marzu-Desktop-Projects-BriefFlow/6df56a2c-d49d-457b-9e07-495db8210ffd/scratchpad/carosello/card.png", "y": 330, "h": 300}
+      ]
+    },
+    {
+      "theme": "light",
+      "label": "04 / Perché LangGraph",
+      "title": "Un processo vero<br/>non va dritto",
+      "title_size": 46,
+      "blocks": [
+        {"type": "body", "text": "Una richiesta può essere fuori ambito. Può mancare il budget. Può servire il parere di una persona.", "size": 21},
+        {"type": "heading", "text": "LangGraph lo descrive<br/>come una mappa.", "size": 32},
+        {"type": "body", "text": "Tappe, strade tra le tappe e la regola che dice quale strada prendere.", "size": 20}
+      ]
+    },
+    {
+      "theme": "dark",
+      "label": "05 / Perché i nodi",
+      "title": "Un passo,<br/>un nodo",
+      "title_size": 50,
+      "blocks": [
+        {"type": "items", "y": 262, "step": 112, "items": [
+          {"name": "Fa una cosa sola", "text": "Classificare, controllare cosa manca, comporre la scheda. Mai tutto insieme."},
+          {"name": "Si può guardare", "text": "Vedo quale nodo lavora, cosa riceve e cosa restituisce."},
+          {"name": "Si può cambiare", "text": "Aggiungo un controllo senza toccare il resto del processo."}
+        ]}
+      ]
+    },
+    {
+      "theme": "light",
+      "label": "06 / La mappa",
+      "title": "Nove nodi.<br/>Ecco come si parlano.",
+      "title_size": 42,
+      "blocks": [
+        {"type": "image", "path": "C:/Users/marzu/AppData/Local/Temp/claude/C--Users-marzu-Desktop-Projects-BriefFlow/6df56a2c-d49d-457b-9e07-495db8210ffd/scratchpad/carosello/grafo-schema.png", "y": 262, "h": 333}
+      ]
+    },
+    {
+      "theme": "dark",
+      "label": "07 / Perché Jev",
+      "title": "Jev decide.<br/>Non scrive.",
+      "title_size": 50,
+      "blocks": [
+        {"type": "lead", "text": "Uso Jev nei tre nodi dove serve giudizio: che tipo di progetto è, se è in linea con i servizi, cosa manca.", "size": 21},
+        {"type": "heading", "text": "Sceglie tra opzioni<br/>che decido io.", "size": 32},
+        {"type": "body", "text": "E dice quanto è sicuro. Se non lo è abbastanza, la richiesta passa a una persona.", "size": 20}
+      ]
+    },
+    {
+      "theme": "dark",
+      "label": "08 / Quando serve una persona",
+      "title": "Il grafo<br/>sa aspettare",
+      "title_size": 50,
+      "blocks": [
+        {"type": "lead", "text": "Se mancano budget o scadenza, il grafo si ferma e manda le domande al cliente.", "size": 21},
+        {"type": "heading", "text": "Ore o giorni dopo,<br/>riparte da dove era.", "size": 32},
+        {"type": "body", "text": "Senza rifare quello che aveva già fatto.", "size": 20}
+      ]
+    },
+    {
+      "theme": "light",
+      "label": "09 / Un caso reale",
+      "title": "Un giro.<br/>Poi un altro.",
+      "title_size": 48,
+      "blocks": [
+        {"type": "body", "text": "Mancavano informazioni: il grafo ha chiesto, aspettato e ricontrollato. Al massimo due volte.", "size": 20, "y": 242},
+        {"type": "image", "path": "C:/Users/marzu/AppData/Local/Temp/claude/C--Users-marzu-Desktop-Projects-BriefFlow/6df56a2c-d49d-457b-9e07-495db8210ffd/scratchpad/carosello/loop.png", "y": 330, "h": 290}
+      ]
+    },
+    {
+      "theme": "dark",
+      "label": "10 / La mappa diventa schermo",
+      "title": "Quello che disegni<br/>è quello che vedi",
+      "title_size": 44,
+      "blocks": [
+        {"type": "lead", "text": "La mappa che ho scritto con LangGraph è la stessa che compare nel backoffice.", "size": 21},
+        {"type": "heading", "text": "Si accende solo la strada<br/>che la richiesta<br/>ha fatto davvero.", "size": 30},
+        {"type": "body", "text": "Niente animazioni finte.", "size": 20}
+      ]
+    },
+    {
+      "theme": "light",
+      "label": "Cosa mi porto via",
+      "title": "LangGraph per la strada.<br/>Jev per le scelte.",
+      "title_size": 41,
+      "blocks": [
+        {"type": "body", "text": "Il codice fa i conti, Jev decide dove serve giudizio, una persona interviene quando nessuno dei due basta.", "size": 21},
+        {"type": "rule"},
+        {"type": "heading", "text": "Nei tuoi processi con l’AI, cosa affideresti a un modello e cosa a una persona?", "size": 29}
+      ]
+    }
+  ]
+}
