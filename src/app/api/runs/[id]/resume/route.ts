@@ -1,0 +1,8 @@
+import { jevLimitReached } from '../../../../../server/limit';
+import { ResumeSchema } from '../../../../../shared/contracts';
+import { execute,snapshot,reserve,releaseReservation } from '../../../../../server/runs';
+import { error,stream } from '../../../../../server/http';
+import { notifyIfNeeded } from '../../../../../server/mailer';
+export const runtime='nodejs';
+export const maxDuration=120;
+export async function POST(req:Request,{params}:{params:Promise<{id:string}>}){if(jevLimitReached())return error(503,'LIMIT_REACHED','Limite Jev raggiunto.');if(!process.env.DATABASE_URL||!process.env.TYPESAFE_API_KEY)return error(503,'UNAVAILABLE','Modalità live non disponibile.',true);let body;try{body=ResumeSchema.safeParse(await req.json());}catch{return error(400,'INVALID_REQUEST','Richiesta non valida.');}if(!body.success)return error(400,'INVALID_REQUEST','Richiesta non valida.');const {id}=await params;if(!/^[0-9a-f-]{36}$/i.test(id))return error(404,'NOT_FOUND','Esecuzione non trovata.');try{const s=await snapshot(id);if(!s)return error(404,'NOT_FOUND','Esecuzione non trovata.');const reservation=await reserve(id,body.data);if(reservation.duplicate){await releaseReservation(id,reservation.connection);return stream(async send=>{for(const e of reservation.current.events)send(e);});}return stream(async send=>{await execute(id,body.data,send,reservation);await notifyIfNeeded(id);});}catch(e){if(e instanceof Error && ['busy','invalid state','invalid input','duplicate'].includes(e.message))return error(409,'CONFLICT','Esecuzione non riprendibile o dati non validi.');return error(503,'UNAVAILABLE','Servizio non disponibile.',true);}}
