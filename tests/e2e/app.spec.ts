@@ -2,6 +2,8 @@ import { test,expect } from '@playwright/test';
 
 // These tests need no Jev key and no database: they never start a run.
 test('public site: services, request dialog with required email, no internal graph',async({page},testInfo)=>{
+ // Form validation must not depend on local secrets or the timing of /api/config.
+ await page.route('**/api/config',route=>route.fulfill({json:{liveAvailable:true,limitReached:false,mailAvailable:false}}));
  const posts:string[]=[]; page.on('request',r=>{if(r.method()==='POST')posts.push(r.url())});
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('/');
@@ -39,6 +41,19 @@ test('public site: services, request dialog with required email, no internal gra
  await page.getByRole('link',{name:'Area azienda'}).click();
  await expect(page).toHaveURL(/\/backoffice$/);
  expect(posts).toEqual([]);expect(errors).toEqual([]);
+});
+
+test('public site: unavailable service keeps a valid request disabled',async({page})=>{
+ const posts:string[]=[];page.on('request',r=>{if(r.method()==='POST')posts.push(r.url())});
+ await page.route('**/api/config',route=>route.fulfill({json:{liveAvailable:false,limitReached:false,mailAvailable:false}}));
+ await page.goto('/');
+ await page.getByRole('button',{name:'Invia una richiesta'}).first().click();
+ const dialog=page.getByRole('dialog',{name:'Invia una richiesta'});
+ await expect(dialog.getByText('Il servizio non è disponibile al momento. Riprova più tardi.')).toBeVisible();
+ await dialog.getByLabel('Di cosa hai bisogno?').fill('Ci serve un portale per i tecnici sul campo.');
+ await dialog.getByLabel('Email').fill('nome@azienda.it');
+ await expect(dialog.getByRole('button',{name:'Invia richiesta'})).toBeDisabled();
+ expect(posts).toEqual([]);
 });
 
 test('backoffice: graph, simulate-request dialog, profile dialog and presentation mode',async({page},testInfo)=>{
