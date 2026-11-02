@@ -127,27 +127,22 @@ export default function BriefFlow() {
   const graphPanel = useRef<HTMLElement>(null);
 
   const view = useMemo(() => projectEvents(events), [events]);
+  // Past the last event the replay is over and the whole run is shown again.
+  const replaying = cursor !== null && cursor < events.length;
+  const isPlaying = playing && replaying;
   const shown = useMemo(
-    () => (cursor === null ? events : events.slice(0, cursor)),
-    [events, cursor],
+    () => (replaying ? events.slice(0, cursor) : events),
+    [events, cursor, replaying],
   );
   const shownView = useMemo(() => projectEvents(shown), [shown]);
-  const replaying = cursor !== null;
 
   useEffect(() => {
-    if (!playing) return;
+    if (!isPlaying) return;
     const timer = setInterval(() => {
       setCursor((c) => (c === null ? 1 : c + 1));
     }, 700);
     return () => clearInterval(timer);
-  }, [playing]);
-
-  useEffect(() => {
-    if (cursor !== null && cursor >= events.length) {
-      setPlaying(false);
-      setCursor(null);
-    }
-  }, [cursor, events.length]);
+  }, [isPlaying]);
 
   function stopReplay() {
     setPlaying(false);
@@ -155,16 +150,16 @@ export default function BriefFlow() {
   }
 
   function togglePlay() {
-    if (playing) setPlaying(false);
+    if (isPlaying) setPlaying(false);
     else {
-      if (cursor === null) setCursor(0);
+      if (!replaying) setCursor(0);
       setPlaying(true);
     }
   }
 
   function stepReplay() {
     setPlaying(false);
-    setCursor((c) => (c === null ? 1 : c + 1));
+    setCursor((c) => (c === null || c >= events.length ? 1 : c + 1));
   }
   const last = events[events.length - 1];
   const lastEvent = last
@@ -848,10 +843,10 @@ export default function BriefFlow() {
                 <button
                   disabled={busy || events.length === 0}
                   onClick={togglePlay}
-                  aria-label={playing ? "Pausa" : "Riproduci il percorso"}
+                  aria-label={isPlaying ? "Pausa" : "Riproduci il percorso"}
                 >
-                  {playing ? <Pause size={14} /> : <Play size={14} />}
-                  {playing ? "Pausa" : "Play"}
+                  {isPlaying ? <Pause size={14} /> : <Play size={14} />}
+                  {isPlaying ? "Pausa" : "Play"}
                 </button>
                 <button
                   disabled={busy || events.length === 0}
